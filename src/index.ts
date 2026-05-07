@@ -10,7 +10,7 @@
 import CreativeEditorSDK from '@cesdk/cesdk-js';
 
 import { initFormBasedTemplateAdoption } from './imgly';
-import { resolveAssetPath } from './resolveAssetPath';
+import { resolveAssetPath } from './imgly/resolveAssetPath';
 
 // ============================================================================
 // Configuration
