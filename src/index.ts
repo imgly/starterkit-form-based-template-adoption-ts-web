@@ -1,33 +1,46 @@
 /**
  * CE.SDK Form-Based Template Adoption Starterkit - Main Entry Point
  *
- * A design editor with form-based template customization, allowing users
- * to fill in template fields through a structured form interface.
+ * Demonstrates form-based template editing where users modify template
+ * content through structured form controls instead of direct canvas manipulation.
  *
- * @see https://img.ly/docs/cesdk/js/getting-started/
+ * Features:
+ * - Edit images through file upload controls
+ * - Edit text through form inputs
+ * - Edit colors across all elements
+ * - Simplified UI with hidden dock/inspector
+ *
+ * @see https://img.ly/docs/cesdk/js/features/
  */
 
-import CreativeEditorSDK from '@cesdk/cesdk-js';
+import CreativeEditorSDK, { Configuration } from '@cesdk/cesdk-js';
 
 import { initFormBasedTemplateAdoption } from './imgly';
-import { resolveAssetPath } from './imgly/resolveAssetPath';
+import { resolveAssetPath } from './resolveAssetPath';
+
+// ============================================================================
+// Scene URL
+// ============================================================================
+
+const SCENE_ARCHIVE_URL = resolveAssetPath(
+  '/cases/form-based-template-adoption/scene.archive'
+);
 
 // ============================================================================
 // Configuration
 // ============================================================================
 
-const config = {
-  userId: 'starterkit-form-based-template-adoption-user'
+const config: Configuration = {
+  userId: 'starterkit-form-based-template-adoption-user',
 
-  // Local assets
-  // baseURL: `/assets/`,
+  // IMG.LY CDN (for quick testing only, NOT recommended for production)
 
-  // License key (required for production)
-  // license: 'YOUR_LICENSE_KEY',
+  // Local assets for development
+
 };
 
 // ============================================================================
-// Initialize Form-Based Template Adoption Editor
+// Initialize Editor
 // ============================================================================
 
 CreativeEditorSDK.create('#cesdk_container', config)
@@ -35,12 +48,11 @@ CreativeEditorSDK.create('#cesdk_container', config)
     // Debug access (remove in production)
     (window as any).cesdk = cesdk;
 
+    // Initialize with form-based template adoption configuration
     await initFormBasedTemplateAdoption(cesdk);
 
     // Load the template scene
-    await cesdk.loadFromArchiveURL(
-      resolveAssetPath('/cases/form-based-template-adoption/scene.archive')
-    );
+    await cesdk.engine.scene.loadFromArchiveURL(SCENE_ARCHIVE_URL);
   })
   .catch((error) => {
     // eslint-disable-next-line no-console
