@@ -17,7 +17,6 @@
 import { EditorPlugin } from '@cesdk/cesdk-js';
 import CreativeEngine, {
   isRGBAColor,
-  type Color,
   type RGBAColor
 } from '@cesdk/engine';
 
@@ -146,7 +145,10 @@ export const FormBasedTemplateAdoptionPlugin = (): EditorPlugin => ({
     // Scene Change Handler
     // ========================================================================
 
+    let hasInitialized = false;
     engine.scene.onActiveChanged(() => {
+      if (hasInitialized) return;
+      hasInitialized = true;
       async function setupScene() {
         const engine = cesdk!.engine;
         // Relocate all transient resources to blob and blob urls.
@@ -322,18 +324,15 @@ export const FormBasedTemplateAdoptionPlugin = (): EditorPlugin => ({
           title: 'Color',
           children: () => {
             Object.keys(colors).forEach((colorId, i) => {
-              const color = JSON.parse(colorId) as Color;
-              const colorState = state(`color-${colorId}`, color);
-
               const foundsColors = colors[colorId];
+              const currentColor = readCurrentColor(engine, foundsColors![0]);
 
               builder.ColorInput(`color-${colorId}`, {
                 inputLabel: `Color ${i + 1}`,
-                value: colorState.value,
+                label: `Color ${i + 1}`,
+                value: currentColor,
 
                 setValue: (newValue) => {
-                  colorState.setValue(newValue);
-
                   foundsColors!.forEach((foundColor) => {
                     if (foundColor.type === 'fill') {
                       const fill = engine.block.getFill(foundColor.id);
@@ -353,10 +352,10 @@ export const FormBasedTemplateAdoptionPlugin = (): EditorPlugin => ({
                       });
                     }
                   });
+                  cesdk.engine.editor.addUndoStep();
                 }
               });
             });
-            cesdk.engine.editor.addUndoStep();
           }
         });
       }
@@ -376,6 +375,21 @@ export const FormBasedTemplateAdoptionPlugin = (): EditorPlugin => ({
 
 const waitUntilLoaded = async (engine: CreativeEngine): Promise<void> => {
   await engine.block.forceLoadResources([engine.scene.get()!]);
+};
+
+const readCurrentColor = (
+  engine: CreativeEngine,
+  found: { id: number; color: RGBAColor; type: 'fill' | 'stroke' | 'text' }
+): RGBAColor => {
+  let color;
+  if (found.type === 'fill') {
+    color = engine.block.getColor(engine.block.getFill(found.id), 'fill/color/value');
+  } else if (found.type === 'stroke') {
+    color = engine.block.getStrokeColor(found.id);
+  } else {
+    color = engine.block.getTextColors(found.id)[0];
+  }
+  return isRGBAColor(color) ? { ...color, a: 1 } : found.color;
 };
 
 const getAllColors = (engine: CreativeEngine) => {
