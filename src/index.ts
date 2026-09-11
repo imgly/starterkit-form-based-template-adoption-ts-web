@@ -10,30 +10,21 @@
  * - Edit colors across all elements
  * - Simplified UI with hidden dock/inspector
  *
- * @see https://img.ly/docs/cesdk/js/key-capabilities-dbb5b1/
+ * @see https://img.ly/docs/cesdk/js/features/
  */
 
 import CreativeEditorSDK, { Configuration } from '@cesdk/cesdk-js';
 
 import { initFormBasedTemplateAdoption } from './imgly';
-
-
-/**
- * Demo assets for this example (scene archives, …) are loaded from the
- * IMG.LY CDN by default. To host them yourself, copy this kit's asset
- * folder to your own CDN or server and change this constant — or set it to
- * `''` and place the files in this app's `public/` directory. No trailing
- * slash.
- */
-export const DEMO_ASSETS_BASE_URL: string =
-  import.meta.env.VITE_DEMO_ASSETS_BASE_URL ||
-  'https://staticimgly.com/imgly/cesdk-web-examples-data/1.82.0/starterkit-form-based-template-adoption';
+import { resolveAssetPath } from './resolveAssetPath';
 
 // ============================================================================
 // Scene URL
 // ============================================================================
 
-const SCENE_URL = `${DEMO_ASSETS_BASE_URL}/cases/form-based-template-adoption/scene/scene.scene`;
+const SCENE_ARCHIVE_URL = resolveAssetPath(
+  '/cases/form-based-template-adoption/scene.archive'
+);
 
 // ============================================================================
 // Configuration
@@ -61,7 +52,7 @@ CreativeEditorSDK.create('#cesdk_container', config)
     await initFormBasedTemplateAdoption(cesdk);
 
     // Load the template scene
-    await cesdk.engine.scene.load(SCENE_URL);
+    await cesdk.engine.scene.loadFromArchiveURL(SCENE_ARCHIVE_URL);
   })
   .catch((error) => {
     // eslint-disable-next-line no-console
