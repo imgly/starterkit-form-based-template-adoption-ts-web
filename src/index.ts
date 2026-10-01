@@ -16,18 +16,8 @@
 import CreativeEditorSDK, { Configuration } from '@cesdk/cesdk-js';
 
 import { initFormBasedTemplateAdoption } from './imgly';
+import { DEMO_ASSETS_BASE_URL } from './imgly/demo-assets';
 
-
-/**
- * Demo assets for this example (scene archives, …) are loaded from the
- * IMG.LY CDN by default. To host them yourself, copy this kit's asset
- * folder to your own CDN or server and change this constant — or set it to
- * `''` and place the files in this app's `public/` directory. No trailing
- * slash.
- */
-export const DEMO_ASSETS_BASE_URL: string =
-  import.meta.env.VITE_DEMO_ASSETS_BASE_URL ||
-  'https://staticimgly.com/imgly/cesdk-web-examples-data/1.82.2/starterkit-form-based-template-adoption';
 
 // ============================================================================
 // Scene URL
@@ -54,8 +44,6 @@ const config: Configuration = {
 
 CreativeEditorSDK.create('#cesdk_container', config)
   .then(async (cesdk) => {
-    // Debug access (remove in production)
-    (window as any).cesdk = cesdk;
 
     // Initialize with form-based template adoption configuration
     await initFormBasedTemplateAdoption(cesdk);
