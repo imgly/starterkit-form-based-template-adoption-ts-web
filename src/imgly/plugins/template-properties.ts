@@ -51,7 +51,7 @@ export const readCurrentColor = (
   } else if (found.type === 'stroke') {
     color = engine.block.getStrokeColor(found.id);
   } else {
-    color = engine.block.getTextColors(found.id)[0];
+    color = engine.block.getTextColors(found.id)[0]!;
   }
   return isRGBAColor(color) ? { ...color, a: 1 } : found.color;
 };
@@ -137,7 +137,7 @@ export const getAllColors = (engine: CreativeEngine) => {
   elementsWithTextColor.forEach((element) => {
     const textColors = engine.block.getTextColors(element);
     if (textColors.length === 1) {
-      const color = textColors[0];
+      const color = textColors[0]!;
 
       if (!isRGBAColor(color)) return;
 
