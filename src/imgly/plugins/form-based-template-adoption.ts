@@ -14,7 +14,7 @@
  * @see https://img.ly/docs/cesdk/js/plugins-693c48/
  */
 
-import { EditorPlugin } from '@cesdk/cesdk-js';
+import type { EditorPlugin } from '@cesdk/cesdk-js';
 
 import {
   BlocksToEditableProperties,
@@ -57,7 +57,7 @@ export const FormBasedTemplateAdoptionPlugin = (): EditorPlugin => ({
     // ========================================================================
 
     // Disable dock feature entirely (replaces deprecated ui.elements.dock.show)
-    cesdk.feature.set('ly.img.dock', false);
+    cesdk.features.configure({ 'ly.img.dock': { enabled: false } });
 
     cesdk.ui.setComponentOrder({ in: 'ly.img.inspector.bar' }, []);
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, []);
@@ -77,7 +77,9 @@ export const FormBasedTemplateAdoptionPlugin = (): EditorPlugin => ({
     ]);
 
     // Hide 'Resize' button on the navigation bar
-    cesdk.feature.set('ly.img.page.resize', false);
+    cesdk.features.configure({
+      'ly.img.page': { options: { resize: { enabled: false } } }
+    });
 
     // ========================================================================
     // Localization
@@ -192,7 +194,7 @@ export const FormBasedTemplateAdoptionPlugin = (): EditorPlugin => ({
             title: 'Image',
             children: () => {
               editableImageTemplateBlocks.forEach(({ blocks }) => {
-                const block = blocks[0];
+                const block = blocks[0]!;
                 const fillBlock = engine.block.getFill(block);
                 const uri =
                   engine.block.getSourceSet(
@@ -275,7 +277,7 @@ export const FormBasedTemplateAdoptionPlugin = (): EditorPlugin => ({
             title: 'Text',
             children: () => {
               editableTextTemplateBlocks.forEach(({ blocks, name }) => {
-                const value = engine.block.getString(blocks[0], 'text/text');
+                const value = engine.block.getString(blocks[0]!, 'text/text');
                 const setValue = (newValue: string) => {
                   blocks.forEach((block) => {
                     engine.block.replaceText(block, newValue);
@@ -308,7 +310,7 @@ export const FormBasedTemplateAdoptionPlugin = (): EditorPlugin => ({
           children: () => {
             Object.keys(colors).forEach((colorId, i) => {
               const foundsColors = colors[colorId];
-              const currentColor = readCurrentColor(engine, foundsColors![0]);
+              const currentColor = readCurrentColor(engine, foundsColors![0]!);
 
               builder.ColorInput(`color-${colorId}`, {
                 inputLabel: `Color ${i + 1}`,
